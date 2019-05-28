@@ -3,7 +3,7 @@
  * COMP20007 Design of Algorithms
  * Semester 1 2019
  *
- * Written by: [ YOUR NAME HERE ]
+ * Written by: [ Garvin Prathama Bulkin]
  */
 
 #include <stdio.h>
@@ -100,12 +100,13 @@ void max_heapify(int* integers, int size, int parent, int isRightHeap){
     max_heapify(integers, size, largest_node, isRightHeap);
   }
 
-  // For creating right max heaps. Swaps the children if right child is smaller than the left.
+  // For creating right max heaps. Swaps the children if right child is smaller than the left, then heapify's left subtree
   if(isRightHeap == RIGHT_MAX_HEAP &&
     right_child < size &&
     left_child < size &&
     integers[left_child] > integers[right_child]){
       swap_node(&integers[left_child], &integers[right_child]);
+      max_heapify(integers, size, left_child, isRightHeap);
     }
 }
 
