@@ -1,6 +1,7 @@
 #ifndef P2_H
 #define P2_H
 
+// Libraries
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,24 +12,25 @@
 // An edge stored by the source vertex, contains destination, and edge weight
 typedef struct edge Edge;
 struct edge{
-    Edge *next;
-    int destination;
-    int weight;
+    Edge *next;         // Pointer to the next edge
+    int destination;    // Index of the vertex that the edge directs to
+    int weight;         // Weight of the edge
 };
 
-// Each vertex stores an adjacency list, and its out degree
+// Each vertex stores an array of its edges, and its out degree
 typedef struct vertex Vertex;
 struct vertex{
-    Edge *edges;
-    int out_degree;
+    Edge *edges;      // An array of of edges
+    int out_degree;   // The out degree of the vertex
 };
 
 // The path cost between a vertex to the source vertex. Also stores the previous vertex in the path, and number of edges. 
+// This is used to create and distance matrix, and the index i of the array corresponds to the path cost from v0 to vi
 typedef struct distance Distance;
 struct distance{
-    int cost;
-    int previous_vertex;
-    int edge_count;
+    int cost;               // The cost of the path from v0 to this vertex
+    int previous_vertex;    // The index of the previous vertex in the path
+    int edge_count;         // How many edges are in the path
 };
 
 
@@ -44,6 +46,9 @@ void free_vertex_array(Vertex *vertices, int size);
 Edge *new_edge();
 int path_exist(int path_cost);
 void print_answers(Distance *distance_array, int N);
+void find_shortest_path_k(Distance *distance, Vertex *vertices, int N, int k);
+int min(int a, int b);
+
 
 #endif
 

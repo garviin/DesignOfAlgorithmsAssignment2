@@ -65,7 +65,25 @@ void problem_2_a() {
 
 /* TODO: Implement your solution to Problem 2.b. in this function. */
 void problem_2_b() {
+  // Reads input data
+  int N, k;
+  scanf("%d %d", &N, &k);
+  Vertex *vertices = read_vertices(N);
   
+  // Get the shortest path
+  Distance *distance_array = initialize_distance_array(N);
+  find_shortest_path_k(distance_array, vertices, N, k);
+  int shortest_path_cost = (distance_array+ N-1)->cost;
+  
+  // Checks if path exists
+  path_exist(shortest_path_cost);
+
+  // Prints the results in the required format
+  print_answers(distance_array, N);
+  
+  // Freeing memory
+  free(distance_array);
+  free_vertex_array(vertices, N);
 }
 
 // Reads the number of vertices
@@ -81,11 +99,13 @@ Vertex *read_vertices(int N){
   Vertex *vertices = (Vertex *)malloc(N*sizeof(Vertex));
 
   // Puts the input values in the array
-  for(int i = 0; i < N; i++){
+  int i;
+  for(i = 0; i < N; i++){
     // Puts all of the edges in the vertex struct
     scanf("%d", &(vertices +i)->out_degree);
     Edge *next = NULL;
-    for (int k = 0; k < (vertices +i)->out_degree; k++){
+    int k;
+    for (k = 0; k < (vertices +i)->out_degree; k++){
       // Initialize a new edge
       Edge *edge = new_edge();
 
@@ -137,7 +157,8 @@ void free_vertex_array(Vertex *vertices, int size){
   assert(vertices);
 
   // Loop through each vertex and free the list of edges
-  for(int i = 0; i < size; i++){
+  int i;
+  for(i = 0; i < size; i++){
     free_edges((vertices+i)->edges, (vertices+i)->out_degree);
   }
   free(vertices);
@@ -154,7 +175,8 @@ Distance *initialize_distance_array(int N){
   distance_array->edge_count = 0;
   
   // Assigns values for remaining vertices
-  for(int i = 1; i < N; i++){
+  int i;
+  for(i = 1; i < N; i++){
     (distance_array+i)->cost = INFINITY;
     (distance_array+i)->previous_vertex = -1;
   }
@@ -163,15 +185,26 @@ Distance *initialize_distance_array(int N){
   return distance_array;
 }
 
+Distance **initialize_distance_array_k(int N, int k){
+  Distance **distance_k = (Distance **)malloc(20 * sizeof(Distance*));
+  int i;
+  for (i = 0; i < k; ++i){
+    distance_k[i] = initialize_distance_array(N);
+  }
+  return distance_k;
+}
+
 // Finds the shortest path for a topologically sorted array of vertices of size N
 void find_shortest_path(Distance *distance, Vertex *vertices, int N){
   // Loop through all the vertices starting from 0
-  for(int i = 0; i < N; i++){
+  int i;
+  for(i = 0; i < N; i++){
     Vertex *current_vertex = vertices + i;
 
     // Iterate through each edge and updates the distance array
     Edge *current_edge = (current_vertex->edges);
-    for(int j = 0 ; j < current_vertex->out_degree; j++){
+    int j;
+    for(j = 0 ; j < current_vertex->out_degree; j++){
       // The distance from the source vertex to the destination of the edge
       Distance *destination = distance + current_edge->destination;
       // The distance from the source vertex tot the origin of the edge
@@ -184,6 +217,40 @@ void find_shortest_path(Distance *distance, Vertex *vertices, int N){
         destination->previous_vertex = i;
         // Dynamically update the number of edges for the path
         destination->edge_count = origin->edge_count + 1;
+      }
+      // Updates the pointer to move on to the next edge 
+      if(current_edge != NULL){
+        current_edge = current_edge->next;
+      }
+    }
+  }
+}
+
+void find_shortest_path_k(Distance *distance, Vertex *vertices, int N, int k){
+  // Loop through all the vertices starting from 0
+  // while path exist && path lenght < k
+  int i;
+  for(i = 0; i < N+1; i++){
+    Vertex *current_vertex = vertices + i;
+    // Iterate through each edge and updates the distance array
+    Edge *current_edge = (current_vertex->edges);
+    int j;
+    for(j = 0 ; j < current_vertex->out_degree; j++){
+      // The distance from the source vertex to the destination of the edge
+      Distance *destination = distance + current_edge->destination;
+      // The distance from the source vertex tot the origin of the edge
+      Distance *origin = distance + i;
+
+      // Updates the distance array based on the edge weights
+      // Only update when the edge_count is less than k
+      if(origin->edge_count + 1 <= k){
+        if((destination->cost > origin->cost + current_edge->weight)){
+          destination->cost = origin->cost + current_edge->weight;
+          // Storing the index of the origin vertex of the edge
+          destination->previous_vertex = i;
+          // Dynamically update the number of edges for the path
+          destination->edge_count = origin->edge_count + 1;
+        }
       }
       // Updates the pointer to move on to the next edge 
       if(current_edge != NULL){
@@ -206,13 +273,14 @@ void print_path(Distance *distance_array, int vertex_count){
   // Traverse through the distance array to get all the vertices in the path
   path_array[0] = vertex_count - 1;
   Distance *current_vertex = last_vertex;
-  for(int i = 1; i < edge_count; i++){
+  int i;
+  for(i = 1; i < edge_count; i++){
     path_array[i] = current_vertex->previous_vertex;
     current_vertex = distance_array + path_array[i];
   }
 
   // Traverse through the path array in reverse order to get all of the vertices in the path starting from source
-  for(int i = edge_count; i >= 0; i--){
+  for(i = edge_count; i >= 0; i--){
     printf("%d\n", path_array[i]);
   }
 
@@ -239,4 +307,20 @@ int path_exist(int path_cost){
     exit(EXIT_SUCCESS);
   }
   return 1;
+}
+
+// Checks if path exists depending on path cost
+int path_exist_k(int path_cost){
+  // When path cost is infinite, there is no path
+  if (path_cost == INFINITY){
+    return 0;
+  }
+  return 1;
+}
+
+int min(int a, int b){
+  if (a < b){
+    return a;
+  }
+  return b;
 }

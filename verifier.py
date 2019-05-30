@@ -171,8 +171,9 @@ class ProgramVerifier:
 
             # Confirm that the largest child is not larger than the parent
             if max(children) > actual[i]:
+                print("child is:" + str(max(children)) + ", parent is " + str(actual[i]))
                 self._fail('heap property not satisfied')
-
+                
             # Check that, if we're after a right handed heap, the right
             # child is no smaller than the left.
             if right_handed and len(children) == 2:

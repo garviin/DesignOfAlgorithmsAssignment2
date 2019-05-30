@@ -75,9 +75,10 @@ void problem_1_b() {
 /* Helper functions */
 
 void build_max_heap(int* integers, int size, int isRightHeap){
-  for(int i = (size)/2 - 1; i >= 0; i--){
+  int i;
+  for(i = (size)/2 - 1; i >= 0; i--){
     max_heapify(integers, size, i, isRightHeap);
-  }
+  } 
 }
 
 void max_heapify(int* integers, int size, int parent, int isRightHeap){
@@ -94,13 +95,13 @@ void max_heapify(int* integers, int size, int parent, int isRightHeap){
     largest_node = right_child;
   }
 
-  // swap with child if parent is not the largest
+  // swap with child if parent is not the largest, then recursively call to heapify the swapped heap
   if(largest_node !=  parent){
     swap_node(&integers[parent], &integers[largest_node]);
     max_heapify(integers, size, largest_node, isRightHeap);
   }
 
-  // For creating right max heaps. Swaps the children if right child is smaller than the left, then heapify's left subtree
+  // For creating right max heaps. Swaps the children if right child is smaller than the left, then heapifies left heap
   if(isRightHeap == RIGHT_MAX_HEAP &&
     right_child < size &&
     left_child < size &&
@@ -130,7 +131,8 @@ int *read_input(int N){
   int *integers = (int *)malloc(N*sizeof(int));
 
   // Puts the input values in the array
-  for (int i = 0; i < N; i++){
+  int i;
+  for (i = 0; i < N; i++){
     scanf("%d", integers + i);
   }
 
@@ -139,7 +141,8 @@ int *read_input(int N){
 
 // Prints an array of integers
 void print_array(int *integers, int size){
-  for (int i = 0; i < size; i++){
+  int i;
+  for (i = 0; i < size; i++){
     printf("%d\n", *(integers + i));
   } 
 }
