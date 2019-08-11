@@ -1,4 +1,4 @@
-# COMP20007_Assignment2
+# Design of Algorithms Assignment 2
 Received 9/11 marks.
 
 Investigation of Heaps, DAGs, and Binary Search Trees.
