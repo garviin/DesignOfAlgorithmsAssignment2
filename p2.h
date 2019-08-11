@@ -34,6 +34,14 @@ struct distance{
 };
 
 
+typedef struct edge2 Edge2;
+struct edge2{
+    int src;
+    int destination;    // Index of the vertex that the edge directs to
+    int weight;         // Weight of the edge
+};
+
+
 Vertex *read_vertices(int N);
 int read_vertex_size();
 void print_vertices(Vertex *vertices, int N);
